@@ -115,7 +115,7 @@ if st.session_state.records:
         with col2:
             if st.button(f"{t['delete']} {idx}", key=f"delete_{idx}"):
                 st.session_state.records.pop(idx)
-                st.experimental_rerun()
+                st.rerun()
 
     # Calculate Summary
     total_income = df[df[t["type"]] == t["income"]]["台幣金額 (TWD)"].sum()
