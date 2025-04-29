@@ -70,7 +70,7 @@ texts = {
 }
 
 # Select language
- t = texts[lang]
+t = texts[lang]
 
 # --- Main App ---
 st.title(t["title"])
