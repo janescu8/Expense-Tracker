@@ -20,6 +20,8 @@ if 'records' not in st.session_state:
 st.sidebar.title("設定 Settings")
 lang = st.sidebar.selectbox("Language 語言", ["中文", "English"])
 usd_to_twd_rate = st.sidebar.number_input("美金轉台幣匯率 (USD ➔ TWD)", min_value=1.0, max_value=100.0, value=32.0, step=0.1)
+display_currency = st.sidebar.selectbox("顯示貨幣 Display Currency", ["TWD", "USD"])
+
 
 # Language Dictionary
 texts = {
@@ -118,13 +120,27 @@ if st.session_state.records:
                 st.rerun()
 
     # Calculate Summary
-    total_income = df[df[t["type"]] == t["income"]]["台幣金額 (TWD)"].sum()
-    total_expense = -df[df[t["type"]] == t["expense"]]["台幣金額 (TWD)"].sum()
-    balance = total_income - total_expense
+    total_income_twd = df[df[t["type"]] == t["income"]]["台幣金額 (TWD)"].sum()
+    total_expense_twd = -df[df[t["type"]] == t["expense"]]["台幣金額 (TWD)"].sum()
+    balance_twd = total_income_twd - total_expense_twd
+    
+    # 根據選擇的顯示幣別轉換
+    if display_currency == "USD":
+        total_income = total_income_twd / usd_to_twd_rate
+        total_expense = total_expense_twd / usd_to_twd_rate
+        balance = balance_twd / usd_to_twd_rate
+        currency_symbol = "$"
+    else:
+        total_income = total_income_twd
+        total_expense = total_expense_twd
+        balance = balance_twd
+        currency_symbol = "NT$"
+    
+    # 顯示 Summary
+    st.subheader(f"{t['total_income']}：{currency_symbol} {total_income:,.2f}")
+    st.subheader(f"{t['total_expense']}：{currency_symbol} {total_expense:,.2f}")
+    st.subheader(f"{t['balance']}：{currency_symbol} {balance:,.2f}")
 
-    st.subheader(f"{t['total_income']}：NT$ {total_income:,.2f}")
-    st.subheader(f"{t['total_expense']}：NT$ {total_expense:,.2f}")
-    st.subheader(f"{t['balance']}：NT$ {balance:,.2f}")
 else:
     st.info(t["no_records"])
 
