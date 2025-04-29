@@ -5,14 +5,11 @@ import altair as alt
 
 from google.oauth2.service_account import Credentials
 
-# 從st.secrets讀取金鑰
-credentials = Credentials.from_service_account_info(st.secrets["gcp_service_account"])
-
-# 用gspread連Google Sheets
-import gspread
-gc = gspread.authorize(credentials)
-sh = gc.open("Expense-Tracker")
-worksheet = sh.sheet1
+# --- Google Sheets Setup ---
+scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+creds = Credentials.from_service_account_info(st.secrets["google_auth"], scopes=scope)
+client = gspread.authorize(creds)
+sheet = client.open("Expense-Tracker").sheet1
 
 # 初始化 Session State
 if 'records' not in st.session_state:
