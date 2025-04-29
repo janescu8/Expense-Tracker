@@ -11,7 +11,7 @@ credentials = Credentials.from_service_account_info(st.secrets["gcp_service_acco
 # 用gspread連Google Sheets
 import gspread
 gc = gspread.authorize(credentials)
-sh = gc.open("Expense Tracker")
+sh = gc.open("Expense-Tracker")
 worksheet = sh.sheet1
 
 # 初始化 Session State
